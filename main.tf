@@ -1,6 +1,14 @@
+terraform {
+  required_providers {
+    hcloud = {
+      source = "hetznercloud/hcloud"
+      version = "1.24.1"
+    }
+  }
+}
 
-# Configure the Hetzner Cloud Provider
 provider "hcloud" {
+  # Configuration options
 }
 
 # Create a server
