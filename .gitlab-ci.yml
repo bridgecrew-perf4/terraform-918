@@ -1,5 +1,6 @@
 image: vault:1.6.2
-read_secrets:
+
+get_secrets:
   script:
     # Check job's ref name
     - echo $CI_COMMIT_REF_NAME
