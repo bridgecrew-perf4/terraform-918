@@ -8,3 +8,7 @@ variables:
 
   # If your terraform files are in a subdirectory, set TF_ROOT accordingly
   TF_ROOT: hetzner
+
+.deploy: &deploy
+  only:
+    - main
