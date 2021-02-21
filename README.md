@@ -1,1 +1,1 @@
-# terraform-hetzner
+# terraform
