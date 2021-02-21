@@ -1,0 +1,13 @@
+{
+  "data":
+  {
+    "attributes": {
+      "name":"placeholder",
+      "auto-apply":"true",
+      "description":"Created by GitLab CI/CD",
+      "source-name":"GitLab CI/CD",
+      "source-url":"https://gitlab.com/kawsark/gl-terraform-gcp-compute-test"
+    },
+    "type":"workspaces"
+  }
+}

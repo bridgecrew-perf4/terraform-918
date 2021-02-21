@@ -1,14 +1,17 @@
-include:
-  - template: Terraform.latest.gitlab-ci.yml
-
-variables:
-  # If not using GitLab's HTTP backend, remove this line and specify TF_HTTP_* variables
-  TF_STATE_NAME: default
-  TF_CACHE_KEY: default
-
-  # If your terraform files are in a subdirectory, set TF_ROOT accordingly
-  TF_ROOT: hetzner
-
-.deploy: &deploy
-  only:
-    - main
+read_secrets:
+  script:
+    # Check job's ref name
+    - echo $CI_COMMIT_REF_NAME
+    # and is this ref protected
+    - echo $CI_COMMIT_REF_PROTECTED
+    # Vault's address can be provided here or as CI/CD variable
+    # - export VAULT_ADDR=http://vault.example.com:8200
+    # Authenticate and get token. Token expiry time and other properties can be configured
+    # when configuring JWT Auth - https://www.vaultproject.io/api/auth/jwt#parameters-1
+    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=myproject-staging jwt=$CI_JOB_JWT)"
+    # Now use the VAULT_TOKEN to read the secret and store it in an environment variable
+    - export HCLOUD_TOKEN="$(vault kv get -field=HCLOUD_TOKEN  kv/myproject/production/hetzner)"
+    # Use the secret
+    - echo $HCLOUD_TOKEN
+    # This will fail because the role myproject-staging can not read secrets from secret/myproject/production/*
+    # - export PASSWORD="$(vault kv get -field=password secret/myproject/production/db)"
