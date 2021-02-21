@@ -1,3 +1,4 @@
+image: vault:1.6.2
 read_secrets:
   script:
     # Check job's ref name
