@@ -32,6 +32,7 @@ cache:
       echo "\$VAULT_TOKEN is empty, could be a bad login."
     else
       echo "\$VAULT_TOKEN is NOT empty, attempting to get secrets"
+      echo $VAULT_TOKEN
       alias terraform="envconsul -once -config .vault/envconsul.hcl terraform"
     fi
 
