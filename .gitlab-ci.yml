@@ -20,7 +20,7 @@ cache:
   - apk add --update curl jq
   - alias convert_report="jq -r '([.resource_changes[].change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
 
-.envconsul: &envconsul
+get-secrets:
   - curl -s $VAULT_ADDR/v1/sys/seal-status
   - curl -s -O https://releases.hashicorp.com/envconsul/0.9.3/envconsul_0.9.3_linux_amd64.tgz
   - echo "fc48c15851119cf5bd6ecc609b6e2b15ece0c7b4d294c8d1890fddeae36a7aaa  envconsul_0.9.3_linux_amd64.tgz" |sha256sum -c
@@ -36,6 +36,8 @@ cache:
       echo "\$VAULT_TOKEN is NOT empty, attempting to get secrets"
       alias terraform="envconsul -once -config .vault/envconsul.hcl terraform"
     fi
+  only:
+    - main
 
 # .gitlab-tf-backend: &gitlab-tf-backend
 #   - export TF_ADDRESS=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/production
@@ -53,10 +55,11 @@ cache:
 
 before_script:
   - *install-curl-jq
-  - *envconsul
+  # - *envconsul
   # - *gitlab-tf-backend
 
 stages:
+  - get-secrets
   - validate
   - plan
   - apply
