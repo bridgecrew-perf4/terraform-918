@@ -28,7 +28,7 @@ cache:
   - install envconsul /usr/local/bin && rm envconsul
   - echo $CI_COMMIT_REF_NAME
   - echo $CI_COMMIT_REF_PROTECTED
-  - "curl -s --request POST --data '{\"jwt\": \"'$CI_JOB_JWT'\"}' $VAULT_ADDR/v1/auth/jwt/login"
+  - "export VAULT_TOKEN=$(curl -s --request POST --data '{\"jwt\": \"'$CI_JOB_JWT'\", \"role\": \"$VAULT_ROLE\"}' $VAULT_ADDR/$VAULT_NAMESPACE/v1/auth/jwt/login | jq -r '.auth.client_token')"
   - >- 
     if [ -z $VAULT_TOKEN ]; then
       echo "\$VAULT_TOKEN is empty, could be a bad login."
