@@ -1,20 +1,146 @@
-image: vault:1.6.2
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
-get_secrets:
+# Default output file for Terraform plan
+variables:
+  PLAN: plan.tfplan
+  JSON_PLAN_FILE: tfplan.json
+  TF_IN_AUTOMATION: "true"
+
+
+cache:
+  key: "$CI_COMMIT_SHA"
+  paths:
+    - .terraform
+
+.install-curl-jq: &install-curl-jq
+  - apk add --update curl jq
+  - alias convert_report="jq -r '([.resource_changes[].change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
+
+.envconsul: &envconsul
+  - curl -s $VAULT_ADDR/v1/sys/seal-status
+  - curl -s -O https://releases.hashicorp.com/envconsul/0.9.3/envconsul_0.9.3_linux_amd64.tgz
+  - echo "fc48c15851119cf5bd6ecc609b6e2b15ece0c7b4d294c8d1890fddeae36a7aaa  envconsul_0.9.3_linux_amd64.tgz" |sha256sum -c
+  - tar -xzvf envconsul_0.9.3_linux_amd64.tgz
+  - install envconsul /usr/local/bin && rm envconsul
+  - echo $CI_COMMIT_REF_NAME
+  - echo $CI_COMMIT_REF_PROTECTED
+  - "curl -s --request POST --data '{\"jwt\": \"'$CI_JOB_JWT'\"}' $VAULT_ADDR/v1/auth/jwt/login"
+  - >- 
+    if [ -z $VAULT_TOKEN ]; then
+      echo "\$VAULT_TOKEN is empty, could be a bad login."
+    else
+      echo "\$VAULT_TOKEN is NOT empty, attempting to get secrets"
+      echo $VAULT_TOKEN
+      alias terraform="envconsul -once -config .vault/envconsul.hcl terraform"
+    fi
+
+# .gitlab-tf-backend: &gitlab-tf-backend
+#   - export TF_ADDRESS=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/production
+#   - export TF_HTTP_ADDRESS=${TF_ADDRESS}
+#   - export TF_HTTP_LOCK_ADDRESS=${TF_ADDRESS}/lock
+#   - export TF_HTTP_LOCK_METHOD=POST
+#   - export TF_HTTP_UNLOCK_ADDRESS=${TF_ADDRESS}/lock
+#   - export TF_HTTP_UNLOCK_METHOD=DELETE
+#   - export TF_HTTP_USERNAME=gitlab-ci-token
+#   - export TF_HTTP_PASSWORD=${CI_JOB_TOKEN}
+#   - export TF_HTTP_RETRY_WAIT_MIN=5
+#   - echo "Using HTTP Backend at $TF_HTTP_ADDRESS"
+#   - terraform --version
+#   - terraform init -reconfigure
+
+before_script:
+  - *install-curl-jq
+  - *envconsul
+  # - *gitlab-tf-backend
+
+stages:
+  - validate
+  - plan
+  - apply
+  - deploy
+  - destroy-apps
+  - destroy
+
+validate:
+  stage: validate
   script:
-    # Check job's ref name
-    - echo $CI_COMMIT_REF_NAME
-    # and is this ref protected
-    - echo $CI_COMMIT_REF_PROTECTED
-    # Vault's address can be provided here or as CI/CD variable
-    # - export VAULT_ADDR=http://vault.example.com:8200
-    # Authenticate and get token. Token expiry time and other properties can be configured
-    # when configuring JWT Auth - https://www.vaultproject.io/api/auth/jwt#parameters-1
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=myproject-production jwt=$CI_JOB_JWT)"
-    # Now use the VAULT_TOKEN to read the secret and store it in an environment variable
-    - export HCLOUD_TOKEN="$(vault kv get -field=HCLOUD_TOKEN  kv/myproject/production/hetzner/hcloud_token)"
-    # Use the secret
-    - echo $HCLOUD_TOKEN
-    # This will fail because the role myproject-staging can not read secrets from secret/myproject/production/*
-    # - export PASSWORD="$(vault kv get -field=password secret/myproject/production/db)"
-    
+    - terraform validate
+    - terraform fmt -check=true
+  only:
+    - branches
+
+merge review:
+  stage: plan
+  script:
+    - terraform plan -out=$PLAN
+    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
+  artifacts:
+    expire_in: 1 week
+    name: plan
+    reports:
+        terraform: $JSON_PLAN_FILE
+  only:
+    - merge_requests
+
+plan production:
+  stage: plan
+  script:
+    - terraform plan
+  only:
+    - master
+  resource_group: production
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve
+    - DYNAMIC_ENVIRONMENT_URL=$(terraform output -no-color env-dynamic-url)
+    - echo "DYNAMIC_ENVIRONMENT_URL=$DYNAMIC_ENVIRONMENT_URL" >> deploy.env
+  dependencies:
+    - plan production
+  artifacts:
+    expire_in: 1 week
+    name: $CI_COMMIT_REF_SLUG
+    reports:
+      dotenv: deploy.env
+  only:
+    - master
+  resource_group: production
+  environment:
+    name: production
+    url: $DYNAMIC_ENVIRONMENT_URL
+    on_stop: destroy
+    auto_stop_in: 12 hours
+
+deploy-apps:
+  stage: deploy
+  variables:
+    APP_ENVIRONMENT: $CI_PROJECT_NAME
+  trigger: gitops-demo/apps/cluster-management
+  only:
+    - master
+
+destroy:
+  stage: destroy
+  script:
+    - terraform destroy -auto-approve
+  when: manual
+  only:
+    - master  
+  environment:
+    name: production
+    action: stop
+
+destroy-gitlab-apps:
+  stage: destroy-apps
+  when: manual
+  variables:
+    APP_ENVIRONMENT: $CI_PROJECT_NAME
+    GITLAB_MANAGED_APPS_FILE: /builds/gitops-demo/apps/cluster-management/.gitlab/managed-apps/uninstall.yml
+  trigger: gitops-demo/apps/cluster-management
+  only:
+    - master
