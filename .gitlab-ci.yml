@@ -26,7 +26,7 @@ cache:
   - echo "fc48c15851119cf5bd6ecc609b6e2b15ece0c7b4d294c8d1890fddeae36a7aaa  envconsul_0.9.3_linux_amd64.tgz" |sha256sum -c
   - tar -xzvf envconsul_0.9.3_linux_amd64.tgz
   - install envconsul /usr/local/bin && rm envconsul
-  - echo $CI_COMMIT_REF_PROTECTED
+  - echo $CI_COMMIT_REF_NAME
   - echo $CI_COMMIT_REF_PROTECTED
   - "curl -s --request POST --data '{\"jwt\": \"'$CI_JOB_JWT'\"}' $VAULT_ADDR/v1/auth/jwt/login"
   - >- 
