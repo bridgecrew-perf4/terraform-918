@@ -51,9 +51,9 @@ cache:
 #   - terraform --version
 #   - terraform init -reconfigure
 
-before_script:
-  - *install-curl-jq
-  - *envconsul
+# before_script:
+#   - *install-curl-jq
+#   - *envconsul
   # - *gitlab-tf-backend
 
 stages:
