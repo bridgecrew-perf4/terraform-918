@@ -4,11 +4,9 @@ include:
 
 .secrets:
   secrets:
-    HETZNER_TOKEN_FILE:
+    HCLOUD_TOKEN_FILE:
       vault: admin/secret/infra/hetzner@secret
       
 before_script:
-  - export GOOGLE_CREDENTIALS=$(cat $GOOGLE_CREDENTIALS_FILE)
-  - export GOOGLE_PROJECT=$(cat $GOOGLE_PROJECT_FILE)
-  - export GOOGLE_REGION=$(cat $GOOGLE_REGION_FILE)
-  - export GITLAB_TOKEN=$(cat $GITLAB_TOKEN_FILE)
+  - export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE)
+
