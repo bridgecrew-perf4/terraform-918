@@ -8,7 +8,7 @@ include:
       vault: admin/infra/prod/hetzner/HCLOUD_TOKEN@secret
       
 before_script:
-  - export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE)
+  - if ["$HCLOUD_TOKEN" != null]; then export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE); fi
 
 validate:
   stage: validate
