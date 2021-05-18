@@ -14,4 +14,4 @@ validate:
   stage: validate
   extends: .secrets
   script:
-    - echo 
+    - echo $HCLOUD_TOKEN
