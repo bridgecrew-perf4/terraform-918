@@ -5,7 +5,7 @@ include:
 .secrets:
   secrets:
     HCLOUD_TOKEN_FILE:
-      vault: admin/infra/prod/hetzner/HCLOUD_TOKEN@secret
+      vault: infra/prod/hetzner/HCLOUD_TOKEN@secret
       
 before_script:
   - export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE)
