@@ -3,8 +3,6 @@ include:
     file: '/terraform.gitlab-ci.yml'
 
 .secrets:
-  script:
-    - echo $CI_JOB_JWT
   secrets:
     HCLOUD_TOKEN_FILE:
       vault: infra/prod/hetzner/HCLOUD_TOKEN@secret
