@@ -11,8 +11,9 @@ resource "hcloud_server" "k8s-master-1" {
   location    = "nbg1"
 }
 
-resource "hcloud_server" "k8s-worker-1" {
-  name        = "k8s-worker-1"
+resource "hcloud_server" "k8s-worker" {
+  count       = 2
+  name        = "k8s-worker-${count.index}"
   image       = var.ubuntu_image
   server_type = "cx21"
   location    = "nbg1"
