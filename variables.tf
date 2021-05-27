@@ -26,8 +26,6 @@ variable "worker_os" {
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
-  default     = "${var.SSH_PUBLIC_KEY}"
-
 }
 
 variable "ssh_port" {
@@ -42,7 +40,6 @@ variable "ssh_username" {
 
 variable "ssh_private_key_file" {
   description = "SSH private key file used to access instances"
-  default     = ""
 }
 
 variable "ssh_agent_socket" {
