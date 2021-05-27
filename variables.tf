@@ -26,7 +26,8 @@ variable "worker_os" {
 
 variable "ssh_public_key_file" {
   description = "SSH public key file"
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "${var.SSH_PUBLIC_KEY}"
+
 }
 
 variable "ssh_port" {
