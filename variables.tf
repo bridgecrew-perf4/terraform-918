@@ -12,10 +12,6 @@ variable "worker_os" {
   default = "ubuntu"
 }
 
-# variable "ssh_public_key_file" {
-#   description = "SSH public key file"
-# }
-
 variable "HCLOUD_SSH_KUBEONE_PUBLIC_KEY" {
   description = "SSH public key file"
 }
@@ -30,7 +26,7 @@ variable "ssh_username" {
   default     = "root"
 }
 
-variable "ssh_private_key_file" {
+variable "HCLOUD_SSH_KUBEONE_PRIVATE_KEY" {
   description = "SSH private key file used to access instances"
 }
 

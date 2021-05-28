@@ -23,7 +23,7 @@ output "kubeone_hosts" {
       network_id           = hcloud_network.net.id
       ssh_agent_socket     = var.ssh_agent_socket
       ssh_port             = var.ssh_port
-      ssh_private_key_file = var.ssh_private_key_file
+      ssh_private_key_file = var.HCLOUD_SSH_KUBEONE_PRIVATE_KEY
       ssh_user             = var.ssh_username
     }
   }
