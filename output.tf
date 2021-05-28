@@ -33,7 +33,7 @@ output "kubeone_workers" {
     "${var.cluster_name}-pool1" = {
       replicas = var.workers_replicas
       providerSpec = {
-        sshPublicKeys   = [file(var.HCLOUD_SSH_KUBEONE_PUBLIC_KEY)]
+        sshPublicKeys   = var.HCLOUD_SSH_KUBEONE_PUBLIC_KEY
         operatingSystem = var.worker_os
         operatingSystemSpec = {
           distUpgradeOnBoot = false

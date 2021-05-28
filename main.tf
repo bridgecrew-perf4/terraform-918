@@ -1,6 +1,6 @@
 resource "hcloud_ssh_key" "kubeone" {
   name       = "kubeone-${var.cluster_name}"
-  public_key = file(var.HCLOUD_SSH_KUBEONE_PUBLIC_KEY)
+  public_key = var.HCLOUD_SSH_KUBEONE_PUBLIC_KEY
 }
 
 resource "hcloud_network" "net" {
