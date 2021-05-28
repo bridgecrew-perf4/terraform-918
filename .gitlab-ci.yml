@@ -9,7 +9,7 @@ include:
     HCLOUD_SSH_KUBEONE_PRIVATE_KEY_FILE:
       vault: infra/prod/hetzner/HCLOUD_SSH_KUBEONE_PRIVATE_KEY@secret
     HCLOUD_SSH_KUBEONE_PUBLIC_KEY_FILE:
-      vault: infra/prod/hetzner/HCLOUD_SSH_KUBEONE_PUBLIC_KY@secret
+      vault: infra/prod/hetzner/HCLOUD_SSH_KUBEONE_PUBLIC_KEY@secret
      
 before_script:
   - export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE)
