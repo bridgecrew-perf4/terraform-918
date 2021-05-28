@@ -65,7 +65,7 @@ kubeone:
   image:
     name: archlinux:latest
   stage: kubeone
-  extends: .secret
+  extends: .secrets
   script:
     - pacman -Sy kubeone --noconfirm
     - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
