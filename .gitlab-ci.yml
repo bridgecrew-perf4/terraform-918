@@ -62,7 +62,8 @@ apply:
 
 kubeone:
   image:
-    name: kubermatic/kubeone-e2e:v0.1.15
+    name: archlinux:latest
   stage: kubeone
   script:
+    - curl -sfL get.kubeone.io | sh
     - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
