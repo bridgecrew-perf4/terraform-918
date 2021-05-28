@@ -25,7 +25,11 @@ variable "worker_os" {
   default = "ubuntu"
 }
 
-variable "ssh_public_key_file" {
+# variable "ssh_public_key_file" {
+#   description = "SSH public key file"
+# }
+
+variable "HCLOUD_SSH_KUBEONE_PUBLIC_KEY_FILE" {
   description = "SSH public key file"
 }
 
