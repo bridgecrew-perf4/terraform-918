@@ -65,6 +65,5 @@ kubeone:
     name: archlinux:latest
   stage: kubeone
   script:
-    - pacman -S unzip
-    - curl -sfL get.kubeone.io | sh
+    - pacman -Sy kubeone --noconfirm
     - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
