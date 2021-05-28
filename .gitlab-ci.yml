@@ -41,9 +41,10 @@ apply:
     - DYNAMIC_ENVIRONMENT_URL=$(terraform output -no-color env-dynamic-url)
     - echo "DYNAMIC_ENVIRONMENT_URL=$DYNAMIC_ENVIRONMENT_URL" >> deploy.env
     - terraform output -json > output.json
-    
+
 kubeone:
   image:
     name: kubermatic/kubeone-e2e:v0.1.15
+    stage: kubeone
     script:
       - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
