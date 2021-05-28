@@ -1,6 +1,6 @@
 variable "cluster_name" {
   description = "prefix for cloud resources"
-  default = "kube01"
+  default     = "kube01"
 }
 
 variable "worker_os" {
