@@ -16,7 +16,7 @@ variable "worker_os" {
 #   description = "SSH public key file"
 # }
 
-variable "HCLOUD_SSH_KUBEONE_PUBLIC_KEY_FILE" {
+variable "HCLOUD_SSH_KUBEONE_PUBLIC_KEY" {
   description = "SSH public key file"
 }
 
