@@ -42,11 +42,7 @@ stages:
   - deploy
   - destroy-apps
   - destroy
-
-validate:
-  stage: validate
-  extends: .secrets
-
+  
 apply:
   stage: apply
   extends: .secrets
