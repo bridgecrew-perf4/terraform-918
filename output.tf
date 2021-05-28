@@ -10,7 +10,6 @@ output "env-dynamic-url" {
   value = "https://${hcloud_load_balancer.load_balancer.ipv4}"
 }
 
-
 output "kubeone_hosts" {
   description = "Control plane endpoints to SSH to"
 
