@@ -6,12 +6,16 @@ include:
   secrets:
     HCLOUD_TOKEN_FILE:
       vault: infra/prod/hetzner/HCLOUD_TOKEN@secret
-      
+    HCLOUD_SSH_KUBEONE_PRIVATE_KEY:
+      vault: infra/prod/hetzner/HCLOUD_SSH_KUBEONE_PRIVATE_KEY@secret
+    HCLOUD_SSH_KUBEONE_PUBLIC_KEY:
+      vault: infra/prod/hetzner/HCLOUD_SSH_KUBEONE_PUBLIC_KEY@secret
+     
 before_script:
   - export HCLOUD_TOKEN=$(cat $HCLOUD_TOKEN_FILE)
+  - export HCLOUD_SSH_KUBEONE_PRIVATE_KEY=$(cat $HCLOUD_SSH_KUBEONE_PRIVATE_KEY_FILE)
+  - export HCLOUD_SSH_KUBEONE_PUBLIC_KEY=$(cat $HCLOUD_SSH_KUBEONE_PUBLIC_KEY_FILE)
 
 validate:
   stage: validate
   extends: .secrets
-  script:
-    - echo $HCLOUD_TOKEN

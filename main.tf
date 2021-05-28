@@ -13,7 +13,7 @@ limitations under the License.
 
 resource "hcloud_ssh_key" "kubeone" {
   name       = "kubeone-${var.cluster_name}"
-  public_key = file(var.ssh_public_key_file)
+  public_key = file(var.HCLOUD_SSH_KUBEONE_PUBLIC_KEY)
 }
 
 resource "hcloud_network" "net" {
