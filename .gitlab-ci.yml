@@ -45,6 +45,6 @@ apply:
 kubeone:
   image:
     name: kubermatic/kubeone-e2e:v0.1.15
-    stage: kubeone
-    script:
-      - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
+  stage: kubeone
+  script:
+    - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
