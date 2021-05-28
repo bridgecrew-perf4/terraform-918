@@ -38,8 +38,8 @@ stages:
   - validate
   - plan
   - apply
-  - deploy
   - kubeone
+  - deploy
   - destroy-apps
   - destroy
 
