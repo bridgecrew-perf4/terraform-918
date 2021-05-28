@@ -16,8 +16,34 @@ before_script:
   - export TF_VAR_HCLOUD_SSH_KUBEONE_PRIVATE_KEY=$(cat $HCLOUD_SSH_KUBEONE_PRIVATE_KEY_FILE)
   - export TF_VAR_HCLOUD_SSH_KUBEONE_PUBLIC_KEY=$(cat $HCLOUD_SSH_KUBEONE_PUBLIC_KEY_FILE)
 
+stages:
+  - validate
+  - plan
+  - apply
+  - deploy
+  - kubeone
+  - destroy-apps
+  - destroy
+
 validate:
   stage: validate
   extends: .secrets
   script:
     - echo $TF_VAR_HCLOUD_SSH_KUBEONE_PUBLIC_KEY
+
+apply:
+  stage: apply
+  extends: .secrets
+  script:
+    - *install-curl-jq
+    - *gitlab-tf-backend
+    - terraform apply -auto-approve
+    - DYNAMIC_ENVIRONMENT_URL=$(terraform output -no-color env-dynamic-url)
+    - echo "DYNAMIC_ENVIRONMENT_URL=$DYNAMIC_ENVIRONMENT_URL" >> deploy.env
+    - terraform output -json > output.json
+    
+kubeone:
+  image:
+    name: kubermatic/kubeone-e2e:v0.1.15
+    script:
+      - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
