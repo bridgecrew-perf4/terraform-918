@@ -46,8 +46,6 @@ stages:
 validate:
   stage: validate
   extends: .secrets
-  script:
-    - echo $TF_VAR_HCLOUD_SSH_KUBEONE_PUBLIC_KEY
 
 apply:
   stage: apply
@@ -67,6 +65,7 @@ kubeone:
   image:
     name: archlinux:latest
   stage: kubeone
+  extends: .secret
   script:
     - pacman -Sy kubeone --noconfirm
     - kubeone apply --manifest $KUBEONE_CONFIG --tfjson output.json
