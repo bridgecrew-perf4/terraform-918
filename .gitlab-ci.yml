@@ -19,3 +19,5 @@ before_script:
 validate:
   stage: validate
   extends: .secrets
+  script:
+    - echo $TF_VAR_HCLOUD_SSH_KUBEONE_PUBLIC_KEY
