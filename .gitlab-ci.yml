@@ -59,6 +59,9 @@ apply:
     - DYNAMIC_ENVIRONMENT_URL=$(terraform output -no-color env-dynamic-url)
     - echo "DYNAMIC_ENVIRONMENT_URL=$DYNAMIC_ENVIRONMENT_URL" >> deploy.env
     - terraform output -json > output.json
+  artifacts:
+    paths:
+    - output.json
 
 kubeone:
   image:
